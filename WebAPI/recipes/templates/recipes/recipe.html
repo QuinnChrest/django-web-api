@@ -1,0 +1,17 @@
+{% load bootstrap5 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+
+{% if recipe %}
+    <div class="row">
+        <div class="col-md-2 offset-md-5">
+            <h1>{{recipe.title}}</h1>
+            <h6>{{recipe.author}} - {{recipe.pub_date|date:"M d, Y"}}</h6>
+            {% if recipe.source %}<h6>{{recipe.source}}</h6>{% endif %}
+            {% if recipe.description %}<p>{{recipe.description}}</p>{% endif %}
+            {{recipe.formatted_markdown | safe}}
+        </div>
+    </div>
+{% else %}
+    <p>Recipe not found.</p>
+{% endif %}
