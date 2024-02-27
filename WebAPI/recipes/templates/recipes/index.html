@@ -1,5 +1,4 @@
-{# Load the tag library #} {% load bootstrap5 %} {# Load CSS and JavaScript #}
-{% bootstrap_css %} {% bootstrap_javascript %} {% if recipe_list %}
+{% if recipe_list %}
 <ul>
   {% for recipe in recipe_list %}
   <li>
