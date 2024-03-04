@@ -32,6 +32,31 @@ def index(request):
         "recipes": data
     }
     return JsonResponse(payload)
+
+def search(request):
+    search  = request.GET.get('search')
+    recipes = Recipe.objects.filter(title__contains=search)
+    paginator = Paginator(recipes,1)
+    page_number = request.GET.get('page')
+    try:
+        page_obj = paginator.get_page(page_number)  # returns the desired page object
+    except PageNotAnInteger:
+        # if page_number is not an integer then assign the first page
+        page_obj = paginator.page(1)
+    except EmptyPage:
+        # if page is empty then return last page
+        page_obj = paginator.page(paginator.num_pages)
+    data = [model_to_dict(recipe) for recipe in page_obj.object_list]
+    payload = {
+        "page": {
+            "current": page_obj.number,
+            "has_next": page_obj.has_next(),
+            "has_previous": page_obj.has_previous(),
+            "count": paginator.num_pages
+        },
+        "recipes": data
+    }
+    return JsonResponse(payload)
     
 def recipe(request, recipe_id):
     data = get_object_or_404(Recipe, pk=recipe_id)
