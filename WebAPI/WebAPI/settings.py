@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'recipes.apps.RecipesConfig',
     'markdownx',
     'bootstrap5',
+    'pytesseract',
 ]
 
 MIDDLEWARE = [
