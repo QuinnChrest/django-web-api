@@ -63,6 +63,13 @@ def recipe(request, recipe_id):
     json_data = json.dumps(model_to_dict(data), default=json_serial)
     return HttpResponse(json_data, content_type='application/json')
 
+def add(request):
+    print(request)
+    # body_unicode = request.POST.body.decode('utf-8')
+    # body = json.loads(body_unicode)
+    # content = body['content']
+    # print(content)
+
 def json_serial(obj):
     if isinstance(obj, (datetime, date)):
         return obj.isoformat()
