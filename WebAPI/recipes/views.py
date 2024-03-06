@@ -1,14 +1,30 @@
 import json
 from datetime import date, datetime
 from django.http import HttpResponse, JsonResponse
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404
 from django.forms.models import model_to_dict
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.views import generic
-from django.utils import timezone
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework.response import Response
+from .serializers import UserSerializer
+from rest_framework import status
+from rest_framework.authtoken.models import Token
+from django.contrib.auth.models import User
+from rest_framework.authentication import SessionAuthentication, TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
 
 from .models import Recipe
 
+@api_view(['POST'])
+def login(request):
+    user = get_object_or_404(User, username=request.data['username'])
+    if not user.check_password(request.data['password']):
+        return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
+    token, created = Token.objects.get_or_create(user=user)
+    serializer = UserSerializer(instance=user)
+    return Response({"token": token.key, "user": serializer.data})
+
+@api_view(['GET'])
 def index(request):
     recipes = Recipe.objects.all()
     paginator = Paginator(recipes,1)
@@ -33,6 +49,7 @@ def index(request):
     }
     return JsonResponse(payload)
 
+@api_view(['GET'])
 def search(request):
     search  = request.GET.get('search')
     recipes = Recipe.objects.filter(title__contains=search)
@@ -58,11 +75,15 @@ def search(request):
     }
     return JsonResponse(payload)
     
+@api_view(['GET'])
 def recipe(request, recipe_id):
     data = get_object_or_404(Recipe, pk=recipe_id)
     json_data = json.dumps(model_to_dict(data), default=json_serial)
     return HttpResponse(json_data, content_type='application/json')
 
+@api_view(['POST'])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def add(request):
     print(request)
     # body_unicode = request.POST.body.decode('utf-8')
