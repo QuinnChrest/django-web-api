@@ -85,11 +85,10 @@ def recipe(request, recipe_id):
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def add(request):
-    print(request)
-    # body_unicode = request.POST.body.decode('utf-8')
-    # body = json.loads(body_unicode)
-    # content = body['content']
-    # print(content)
+    body_unicode = request.body.decode('utf-8')
+    body = json.loads(body_unicode)
+    print(body)
+    return Response()
 
 def json_serial(obj):
     if isinstance(obj, (datetime, date)):
