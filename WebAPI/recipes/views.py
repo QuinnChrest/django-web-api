@@ -1,5 +1,5 @@
 import json
-from datetime import date, datetime
+from datetime import date, datetime, timezone
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.forms.models import model_to_dict
@@ -27,7 +27,7 @@ def login(request):
 @api_view(['GET'])
 def index(request):
     recipes = Recipe.objects.all()
-    paginator = Paginator(recipes,1)
+    paginator = Paginator(recipes,2)
     page_number = request.GET.get('page')
     try:
         page_obj = paginator.get_page(page_number)  # returns the desired page object
@@ -87,7 +87,15 @@ def recipe(request, recipe_id):
 def add(request):
     body_unicode = request.body.decode('utf-8')
     body = json.loads(body_unicode)
-    print(body)
+    recipe = Recipe.objects.create(
+        title=body['title'],
+        source=body['source'],
+        author=body['author'],
+        description=body['description'],
+        recipe=body['recipe'],
+        pub_date=timezone.now()
+    )
+    recipe.save()
     return Response()
 
 def json_serial(obj):

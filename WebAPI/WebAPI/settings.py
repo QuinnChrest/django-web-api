@@ -39,11 +39,9 @@ INSTALLED_APPS = [
     'polls.apps.PollsConfig',
     'recipes.apps.RecipesConfig',
     'markdownx',
-    'bootstrap5',
     'pytesseract',
     'rest_framework',
     'rest_framework.authtoken',
-    'corsheaders',
 ]
 
 MIDDLEWARE = [
